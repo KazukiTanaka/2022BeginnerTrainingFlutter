@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:beginner_training_flutter/keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
@@ -154,13 +156,16 @@ mutation answerWordMutation($wordId: String!, $word: String!, $userId: String!) 
     // 四角たちの状態を代入
     for (var answer in answerResult) {
       if (answer.judge == "CORRECT") {
-        tiles[answer.position + (cursor.currentTimes * 4)].state = CharState.CORRECT;
+        tiles[answer.position + (cursor.currentTimes * 4)].state =
+            CharState.CORRECT;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       } else if (answer.judge == "EXISTING") {
-        tiles[answer.position + (cursor.currentTimes * 4)].state = CharState.EXISTING;
+        tiles[answer.position + (cursor.currentTimes * 4)].state =
+            CharState.EXISTING;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       } else if (answer.judge == "NOTHING") {
-        tiles[answer.position + (cursor.currentTimes * 4)].state = CharState.NOTHING;
+        tiles[answer.position + (cursor.currentTimes * 4)].state =
+            CharState.NOTHING;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       }
     }
@@ -253,7 +258,7 @@ query correctWordQuery($wordId: String!) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            height: 500,
+            height: 400,
             child: GridView.count(
               shrinkWrap: true,
               crossAxisCount: 4,
@@ -275,7 +280,10 @@ query correctWordQuery($wordId: String!) {
               (answerWord.length == 4) ? answer() : null;
             },
             onTapDelete: () {
-              setState(() {
+              if (answerWord.isEmpty) {
+                return;
+              }
+              return setState(() {
                 // 回答配列の最後を削除してく
                 answerWord.removeAt(answerWord.length - 1);
                 // 四角は空文字にする
