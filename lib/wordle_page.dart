@@ -33,10 +33,10 @@ class TileState {
 
 // 合ってるか間違ってるのか存在はしてるのかなど，返ってくる結果を表したもの
 enum CharState {
-  CORRECT,
-  EXISTING,
-  NOTHING,
-  NO_ANSWER,
+  correct,
+  existing,
+  nothing,
+  noAnswer,
 }
 
 // 今何回目で何文字目なのかを表すためのクラスを用意
@@ -95,7 +95,7 @@ class CorrectWordState extends State<CorrectWord> {
       times: 0,
       position: 0,
       char: "",
-      state: CharState.NO_ANSWER,
+      state: CharState.noAnswer,
     ),
   );
 
@@ -157,15 +157,15 @@ mutation answerWordMutation($wordId: String!, $word: String!, $userId: String!) 
     for (var answer in answerResult) {
       if (answer.judge == "CORRECT") {
         tiles[answer.position + (cursor.currentTimes * 4)].state =
-            CharState.CORRECT;
+            CharState.correct;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       } else if (answer.judge == "EXISTING") {
         tiles[answer.position + (cursor.currentTimes * 4)].state =
-            CharState.EXISTING;
+            CharState.existing;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       } else if (answer.judge == "NOTHING") {
         tiles[answer.position + (cursor.currentTimes * 4)].state =
-            CharState.NOTHING;
+            CharState.nothing;
         tiles[answer.position + (cursor.currentTimes * 4)].char = answer.char;
       }
     }
@@ -323,13 +323,13 @@ Widget _tile(TileState tileState) {
   // 四角の状態によって文字色を変える
   // 回答ないときはグレー，あるとき（背景色がある場合）は白色へ
   Color textColor = Colors.blueGrey;
-  if (tileState.state == CharState.CORRECT) {
+  if (tileState.state == CharState.correct) {
     boxBackgroundColor = Colors.green;
     textColor = Colors.white;
-  } else if (tileState.state == CharState.EXISTING) {
+  } else if (tileState.state == CharState.existing) {
     boxBackgroundColor = Colors.amber;
     textColor = Colors.white;
-  } else if (tileState.state == CharState.NOTHING) {
+  } else if (tileState.state == CharState.nothing) {
     boxBackgroundColor = Colors.grey;
     textColor = Colors.white;
   }

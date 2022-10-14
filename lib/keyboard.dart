@@ -35,32 +35,32 @@ class _KeyBoardState extends State<KeyBoard> {
   // アルファベットたちを定義
   // 最初は回答無しの状態
   List<AlphabetState> alphabets = [
-    AlphabetState(char: "Q", state: CharState.NO_ANSWER),
-    AlphabetState(char: "W", state: CharState.NO_ANSWER),
-    AlphabetState(char: "E", state: CharState.NO_ANSWER),
-    AlphabetState(char: "R", state: CharState.NO_ANSWER),
-    AlphabetState(char: "T", state: CharState.NO_ANSWER),
-    AlphabetState(char: "Y", state: CharState.NO_ANSWER),
-    AlphabetState(char: "U", state: CharState.NO_ANSWER),
-    AlphabetState(char: "I", state: CharState.NO_ANSWER),
-    AlphabetState(char: "O", state: CharState.NO_ANSWER),
-    AlphabetState(char: "P", state: CharState.NO_ANSWER),
-    AlphabetState(char: "A", state: CharState.NO_ANSWER),
-    AlphabetState(char: "S", state: CharState.NO_ANSWER),
-    AlphabetState(char: "D", state: CharState.NO_ANSWER),
-    AlphabetState(char: "F", state: CharState.NO_ANSWER),
-    AlphabetState(char: "G", state: CharState.NO_ANSWER),
-    AlphabetState(char: "H", state: CharState.NO_ANSWER),
-    AlphabetState(char: "J", state: CharState.NO_ANSWER),
-    AlphabetState(char: "K", state: CharState.NO_ANSWER),
-    AlphabetState(char: "L", state: CharState.NO_ANSWER),
-    AlphabetState(char: "Z", state: CharState.NO_ANSWER),
-    AlphabetState(char: "X", state: CharState.NO_ANSWER),
-    AlphabetState(char: "C", state: CharState.NO_ANSWER),
-    AlphabetState(char: "V", state: CharState.NO_ANSWER),
-    AlphabetState(char: "B", state: CharState.NO_ANSWER),
-    AlphabetState(char: "N", state: CharState.NO_ANSWER),
-    AlphabetState(char: "M", state: CharState.NO_ANSWER),
+    AlphabetState(char: "Q", state: CharState.noAnswer),
+    AlphabetState(char: "W", state: CharState.noAnswer),
+    AlphabetState(char: "E", state: CharState.noAnswer),
+    AlphabetState(char: "R", state: CharState.noAnswer),
+    AlphabetState(char: "T", state: CharState.noAnswer),
+    AlphabetState(char: "Y", state: CharState.noAnswer),
+    AlphabetState(char: "U", state: CharState.noAnswer),
+    AlphabetState(char: "I", state: CharState.noAnswer),
+    AlphabetState(char: "O", state: CharState.noAnswer),
+    AlphabetState(char: "P", state: CharState.noAnswer),
+    AlphabetState(char: "A", state: CharState.noAnswer),
+    AlphabetState(char: "S", state: CharState.noAnswer),
+    AlphabetState(char: "D", state: CharState.noAnswer),
+    AlphabetState(char: "F", state: CharState.noAnswer),
+    AlphabetState(char: "G", state: CharState.noAnswer),
+    AlphabetState(char: "H", state: CharState.noAnswer),
+    AlphabetState(char: "J", state: CharState.noAnswer),
+    AlphabetState(char: "K", state: CharState.noAnswer),
+    AlphabetState(char: "L", state: CharState.noAnswer),
+    AlphabetState(char: "Z", state: CharState.noAnswer),
+    AlphabetState(char: "X", state: CharState.noAnswer),
+    AlphabetState(char: "C", state: CharState.noAnswer),
+    AlphabetState(char: "V", state: CharState.noAnswer),
+    AlphabetState(char: "B", state: CharState.noAnswer),
+    AlphabetState(char: "N", state: CharState.noAnswer),
+    AlphabetState(char: "M", state: CharState.noAnswer),
   ];
 
   @override
@@ -86,7 +86,7 @@ class _KeyBoardState extends State<KeyBoard> {
 
     for (var tileState in tiles) {
       // 四角の状態が正解だった場合
-      if (tileState.state == CharState.CORRECT) {
+      if (tileState.state == CharState.correct) {
         // 四角の正解の文字とアルファベットを比較していく
         for (var alphabet in alphabets) {
           // 一致したら
@@ -94,29 +94,29 @@ class _KeyBoardState extends State<KeyBoard> {
             setState(() {
               debugPrint("せいかい：${alphabet.char}");
               // アルファベットの状態を正解に！
-              alphabet.state = CharState.CORRECT;
+              alphabet.state = CharState.correct;
             });
           }
         }
-      } else if (tileState.state == CharState.EXISTING) {
+      } else if (tileState.state == CharState.existing) {
         for (var alphabet in alphabets) {
           if (tileState.char == alphabet.char) {
             setState(() {
               debugPrint("おしい：${alphabet.char}");
-              // CORRECT があった場合，緑にしておきたいので色が上書きされないように return しちゃう
-              if (alphabet.state == CharState.CORRECT) {
+              // correct があった場合，緑にしておきたいので色が上書きされないように return しちゃう
+              if (alphabet.state == CharState.correct) {
                 return;
               }
-              alphabet.state = CharState.EXISTING;
+              alphabet.state = CharState.existing;
             });
           }
         }
-      } else if (tileState.state == CharState.NOTHING) {
+      } else if (tileState.state == CharState.nothing) {
         for (var alphabet in alphabets) {
           if (tileState.char == alphabet.char) {
             setState(() {
               debugPrint("まちがい：${alphabet.char}");
-              alphabet.state = CharState.NOTHING;
+              alphabet.state = CharState.nothing;
             });
           }
         }
@@ -196,11 +196,11 @@ class _KeyBoardState extends State<KeyBoard> {
     // 最初の色は薄グレー色
     Color backgroundColor = Colors.grey;
     // アルファベットの状態によって色を変える！
-    if (charState == CharState.CORRECT) {
+    if (charState == CharState.correct) {
       backgroundColor = Colors.green;
-    } else if (charState == CharState.EXISTING) {
+    } else if (charState == CharState.existing) {
       backgroundColor = Colors.amber;
-    } else if (charState == CharState.NOTHING) {
+    } else if (charState == CharState.nothing) {
       backgroundColor = Colors.blueGrey;
     }
 
