@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:beginner_training_flutter/keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
@@ -17,6 +15,7 @@ class Answer {
   final String judge;
 }
 
+// todo: BloC出来そう
 // 四角たち状態を格納するためのクラスを用意
 class TileState {
   TileState({
@@ -37,6 +36,45 @@ enum CharState {
   existing,
   nothing,
   noAnswer,
+}
+
+extension CharStateExtension on CharState {
+  Color get textColor {
+    switch (this) {
+      case CharState.noAnswer:
+        return Colors.blueGrey;
+      case CharState.correct:
+      case CharState.existing:
+      case CharState.nothing:
+        return Colors.white;
+    }
+  }
+
+  Color get tileBackgroundColor {
+    switch (this) {
+      case CharState.noAnswer:
+        return Colors.white;
+      case CharState.correct:
+        return Colors.green;
+      case CharState.existing:
+        return Colors.amber;
+      case CharState.nothing:
+        return Colors.grey;
+    }
+  }
+
+  Color get keyboardBackgroundColor {
+    switch (this) {
+      case CharState.noAnswer:
+        return Colors.grey;
+      case CharState.correct:
+        return Colors.green;
+      case CharState.existing:
+        return Colors.amber;
+      case CharState.nothing:
+        return Colors.blueGrey;
+    }
+  }
 }
 
 // 今何回目で何文字目なのかを表すためのクラスを用意
@@ -100,11 +138,7 @@ class CorrectWordState extends State<CorrectWord> {
   );
 
   void answer() async {
-    // 配列で受け取った文字を word に合算してく
-    String word = "";
-    for (var element in answerWord) {
-      word += element;
-    }
+    String word = answerWord.join();
 
     const String answerWordQuery = r'''
 mutation answerWordMutation($wordId: String!, $word: String!, $userId: String!) {
@@ -136,20 +170,17 @@ mutation answerWordMutation($wordId: String!, $word: String!, $userId: String!) 
     final data = result.data;
     if (data != null) {
       // chars はリストで返ってくるので List として answer に格納
-      final answer = data["answerWord"]["chars"] as List;
-      // answer の中身をひとつづつ見ていく
+      final answerChars = data["answerWord"]["chars"] as List;
+      final List<Answer> answers = answerChars
+          .map((answer) => Answer(
+                char: answer["char"],
+                position: answer["position"],
+                judge: answer["judge"],
+              ))
+          .toList();
+
       setState(() {
-        for (var a in answer) {
-          // 上で作った Answer クラスに合わせて代入していく
-          // answerResult 配列に追加してく！
-          answerResult.add(
-            Answer(
-              char: a["char"],
-              position: a["position"],
-              judge: a["judge"],
-            ),
-          );
-        }
+        answerResult = answers;
       });
     }
 
@@ -318,22 +349,6 @@ query correctWordQuery($wordId: String!) {
 }
 
 Widget _tile(TileState tileState) {
-  // 四角の状態によって背景色を変える
-  Color boxBackgroundColor = Colors.white;
-  // 四角の状態によって文字色を変える
-  // 回答ないときはグレー，あるとき（背景色がある場合）は白色へ
-  Color textColor = Colors.blueGrey;
-  if (tileState.state == CharState.correct) {
-    boxBackgroundColor = Colors.green;
-    textColor = Colors.white;
-  } else if (tileState.state == CharState.existing) {
-    boxBackgroundColor = Colors.amber;
-    textColor = Colors.white;
-  } else if (tileState.state == CharState.nothing) {
-    boxBackgroundColor = Colors.grey;
-    textColor = Colors.white;
-  }
-
   return Padding(
     padding: const EdgeInsets.all(4.0),
     // DecoratedBox は四角に枠線つけたりデコれる widget💓
@@ -341,7 +356,7 @@ Widget _tile(TileState tileState) {
       decoration: BoxDecoration(
         // 枠線の色
         border: Border.all(color: Colors.blueGrey),
-        color: boxBackgroundColor,
+        color: tileState.state.tileBackgroundColor,
         // 枠線の角丸
         borderRadius: BorderRadius.circular(10),
       ),
@@ -351,7 +366,7 @@ Widget _tile(TileState tileState) {
           tileState.char,
           style: TextStyle(
             fontSize: 60,
-            color: textColor,
+            color: tileState.state.textColor,
             fontWeight: FontWeight.bold,
           ),
         ),

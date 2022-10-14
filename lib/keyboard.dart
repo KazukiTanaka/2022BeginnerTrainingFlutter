@@ -193,24 +193,13 @@ class _KeyBoardState extends State<KeyBoard> {
     Function(String)? onTapAlphabet,
     CharState charState,
   ) {
-    // 最初の色は薄グレー色
-    Color backgroundColor = Colors.grey;
-    // アルファベットの状態によって色を変える！
-    if (charState == CharState.correct) {
-      backgroundColor = Colors.green;
-    } else if (charState == CharState.existing) {
-      backgroundColor = Colors.amber;
-    } else if (charState == CharState.nothing) {
-      backgroundColor = Colors.blueGrey;
-    }
-
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: SizedBox(
         width: width / 13,
         child: TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: backgroundColor,
+            backgroundColor: charState.keyboardBackgroundColor,
           ),
           child: Text(
             char,
